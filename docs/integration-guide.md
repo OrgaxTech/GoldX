@@ -40,21 +40,14 @@ Create config/goldx.json:
 examples/mt5-connector-sample.mq5 (or just copy that file into MQL5/Experts/).
 
 2. In the EA parameters:
-
 Set Symbol = XAUUSD
-
 Set the magic to match config.execution.magic
-
 Allow algorithmic trading and DLL if needed by your environment
-
 Attach the EA to an XAUUSD chart (preferably M1). It will relay ticks/bars and execute orders from GoldX.
 
 3. EA responsibilities
-
 Send ticks/bars to GoldX (IPC/Socket/Files depending on your variant)
-
 Receive orders and call OrderSend / PositionClose
-
 Report execution back
 
 ## 4. Python Runner
