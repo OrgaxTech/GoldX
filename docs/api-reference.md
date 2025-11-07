@@ -7,7 +7,7 @@ If you use the MT5 bridge, see `examples/mt5-connector-sample.mq5` for the MQL5 
 
 ---
 
-##1.Core Classes
+## 1.Core Classes
 
 ### `GoldXClient`
 
@@ -81,7 +81,7 @@ for tick in make_tick_stream(symbol=cfg["symbol"]):
     client.on_tick(tick)
 client.stop()
 ```
-##2. Order Request Schema
+## 2. Order Request Schema
 ```json
 {
   "symbol": "XAUUSD",
@@ -106,29 +106,29 @@ Execution report (example):
   "ts": 1731009605
 }
 ```
-##3. Errors
-```python
+## 3. Errors
+```bash
 AdapterConnectionError
 ```
 
-```python
+```bash
 OrderRejectedError
 ```
 
-```python
+```bash
 InvalidConfigError
 ```
 
 All raise with a clear .message and are also logged by Telemetry.
 
-##4.Utilities
-```python
+## 4.Utilities
+```bash
 goldx.utils.atri(bars, period=14) -> float
 ```
-```python
+```bash
 goldx.utils.position_size(account_balance, risk, stop_points, tick_value) -> float
 ```
-```python
+```bash
 goldx.utils.timestamp()
 ```
 
