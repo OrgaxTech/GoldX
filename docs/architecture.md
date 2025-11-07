@@ -75,7 +75,7 @@ You can keep configuration in `config/goldx.json`:
   }
 }
 ```
-##Threading Model
+## Threading Model
 
 Signal evaluation runs on the market data loop.
 
