@@ -1,89 +1,105 @@
-# GoldX – Architecture Overview
+# GoldX — Architecture
 
-GoldX is a **trend-following scalping assistant** for XAUUSD (gold) built around three core layers:
-
-1) **Signal Engine**
-   - Ingests market data (1m → 1h candles).
-   - Computes multi-timeframe trend context (M1, M5, M15, M30, H1).
-   - Produces a directional signal: `long`, `short`, or `flat`, with a confidence score `0..1`.
-
-2) **Risk Manager**
-   - Transforms a raw signal into a trade plan using account equity, max risk %, ATR/volatility.
-   - Outputs lot size, SL/TP distances, and optional break-even/partial close rules.
-
-3) **Execution Adapter**
-   - Sends the trade plan to the connected broker or platform.
-   - Supports:
-     - **HTTP/REST** (for custom bridges and prop firm APIs).
-     - **MetaTrader 5 bridge** (sample connector in `examples/mt5-connector-sample.mq5`).
-
-Auxiliary services:
-- **State & Logging** – JSON logs + optional WebSocket stream.
-- **Config** – YAML/JSON configuration with environment overrides.
-- **Backtest Sandbox** – lightweight offline engine to replay candles and evaluate metrics.
+GoldX is a lightweight trading assistant/SDK designed for **clear-trend execution** on **XAUUSD** (primary) and **BTCUSD** (optional).  
+It focuses on three things: **trend detection across M1→H1**, **risk-controlled order sizing**, and **adapter-based execution**.
 
 ---
 
-## Data Flow (high level)
+## High-Level Components
++-----------------+ +------------------+ +---------------------+
+| Data Feeds | -----> | Signal Engine | -----> | Risk Manager |
+| (Broker API, | | (Multi-TF trend) | | (size, SL/TP, DD) |
+| MT5 bridge) | +---------+--------+ +----------+----------+
+| | | |
++-----------------+ v v
++---------------------+ +--------------------+
+| Execution Adapter | --> | Broker/Exchange |
+| (MT5, REST, FIX) | | (orders, account) |
++----------+----------+ +--------------------+
+|
+v
++---------------+
+| Telemetry |
+| (logs, metrics|
+| and events) |
++---------------+
 
-+-------------+ +---------------+ +--------------+ +----------------+
-| Market Data | ---> | Signal Engine | ---> | Risk Manager | ---> | Exec. Adapter |
-| (candles) | | MTF trend | | size/SL/TP | | (MT5 / REST) |
-+-------------+ +---------------+ +--------------+ +----------------+
+**Modules**
+- **Signal Engine**  
+  Computes directional bias using multi-timeframe inputs (M1, M5, M15, M30, H1).  
+  Outputs: `bullish`, `bearish`, `neutral` with a confidence score `0..1`.
+
+- **Risk Manager**  
+  Converts intent into executable orders: position size, stop, take-profit, break-even, pause after profit, etc.
+
+- **Execution Adapter**  
+  Pluggable layer (MT5 Expert/Bridge, REST, or custom) that actually places/updates/cancels orders.
+
+- **Telemetry**  
+  Structured logs + optional metrics stream for later review or backtesting notes.
+
 ---
 
-## Configuration
+## Data Flow
 
-GoldX reads configuration from `config.json` (or environment variables):
+1. **Tick/Bar arrives** → routed to the **Signal Engine**.  
+2. **Signal Engine** produces `{direction, confidence, trend_tf_snapshot}`.  
+3. **Risk Manager** computes `{volume, sl, tp, tags}`.  
+4. **Execution Adapter** sends the order and watches its lifecycle.  
+5. **Telemetry** records every decision + broker response.
+
+---
+
+## Configuration (example)
+
+You can keep configuration in `config/goldx.json`:
 
 ```json
 {
   "symbol": "XAUUSD",
   "timeframes": ["M1", "M5", "M15", "M30", "H1"],
   "risk": {
-    "max_risk_pct": 0.5,
-    "sl_atr_mult": 1.8,
-    "tp_rr": 1.5
+    "max_risk_per_trade": 0.01,
+    "stop_atr_mult": 2.5,
+    "tp_rr": 1.8
   },
   "execution": {
-    "mode": "HTTP",
-    "http_endpoint": "https://your-bridge.example.com/v1/orders",
-    "api_key": "YOUR_API_KEY"
+    "adapter": "mt5",
+    "magic": 20251107,
+    "slippage_points": 10
+  },
+  "telemetry": {
+    "log_level": "info"
   }
 }
-Environment overrides (examples):GOLDX_SYMBOL=XAUUSD
-GOLDX_MAX_RISK_PCT=0.5
-GOLDX_EXECUTION_MODE=HTTP
-GOLDX_HTTP_ENDPOINT=https://your-bridge.example.com/v1/orders
-GOLDX_API_KEY=xxx
-Components
-
-goldx.signal
-
-generate_signal(candles: dict) -> dict
-
-Returns: {"side": "long|short|flat", "confidence": float, "context": {...}}
-
-goldx.risk
-
-make_trade_plan(signal: dict, account: dict, symbol_meta: dict) -> dict
-
-Returns an executable order with lot size, SL/TP levels.
-
-goldx.exec.http
-
-place_order(plan: dict, api_key: str, endpoint: str) -> dict
-
-goldx.exec.mt5
-
-Examples provided in examples/mt5-connector-sample.mq5.
 ```
-Notes
+Threading Model
 
-GoldX is an assistant: it produces structured, risk-aware trade plans to execute when the trend is clear.
+Signal evaluation runs on the market data loop.
 
-All public pieces in this repository are released under the MIT License.
+Execution is async, responses are queued back to the main loop.
 
-## License
-MIT License for public components.
+Telemetry is non-blocking (fire-and-forget).
+
+Create a class that implements:
+```json
+class ExecutionAdapter:
+    def connect(self) -> None: ...
+    def send_order(self, request: dict) -> dict: ...
+    def modify_order(self, order_id: str, fields: dict) -> dict: ...
+    def close_position(self, position_id: str) -> dict: ...
+    def account_info(self) -> dict: ...
+```
+Register it in execution.adapter (e.g., rest, mt5, paper).
+```bash
+/docs
+  ├─ architecture.md
+  ├─ api-reference.md
+  └─ integration-guide.md
+/examples
+  ├─ python-example.py            # minimal Python run-loop example
+  └─ mt5-connector-sample.mq5     # MT5 bridge (sample)
+LICENSE
+README.md
+```
 
