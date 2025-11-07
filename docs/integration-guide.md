@@ -90,7 +90,9 @@ Collect PnL/metrics to validate settings.
 
 ## 7. Troubleshooting
 No orders? Check EA journal (MT5) and Python logs.
+
 Wrong symbol or digits? Make sure broker symbol settings match configuration.
+
 Latency issues? Reduce logging level (telemetry.log_level = "warn").
 
 ## 8. FAQ
