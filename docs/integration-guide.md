@@ -1,5 +1,3 @@
-
-
 # GoldX — Integration Guide
 
 This guide shows how to run GoldX with the **MT5 bridge** (recommended) or a **Python-only adapter**.
@@ -13,7 +11,6 @@ This guide shows how to run GoldX with the **MT5 bridge** (recommended) or a **P
 - A Windows session (MT5) or a broker REST account if using a REST adapter  
 - Clone this repo
 
-```
 git clone https://github.com/OrgaxTech/GoldX.git
 cd GoldX
 Folder structure is documented in README.md and docs/architecture.md.
