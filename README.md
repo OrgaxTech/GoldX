@@ -1,3 +1,9 @@
+![MIT License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Platform](https://img.shields.io/badge/platform-MT5%20%7C%20REST-orange)
+
+
 # GoldX – High-Performance XAUUSD Trading Engine
 
 GoldX is OrgaX's flagship trading engine designed for high-frequency scalping on **XAUUSD**.  
