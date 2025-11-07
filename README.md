@@ -27,14 +27,23 @@ This repository provides:
 
 ##  Repository Structure
 GoldX/
+
 ├── docs/
+
 │ ├── architecture.md
+
 │ ├── api-reference.md
+
 │ └── integration-guide.md
+
 ├── examples/
+
 │ ├── python-example.py
+
 │ └── mt5-connector-sample.mq5
+
 ├── LICENSE
+
 └── README.md
 
 
