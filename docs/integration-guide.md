@@ -1,6 +1,5 @@
-## 3) `docs/integration-guide.md`
 
-```markdown
+
 # GoldX — Integration Guide
 
 This guide shows how to run GoldX with the **MT5 bridge** (recommended) or a **Python-only adapter**.
