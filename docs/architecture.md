@@ -6,6 +6,7 @@ It focuses on three things: **trend detection across M1→H1**, **risk-controlle
 ---
 
 ## High-Level Components
+```bash
 +-----------------+ +------------------+ +---------------------+
 | Data Feeds | -----> | Signal Engine | -----> | Risk Manager |
 | (Broker API, | | (Multi-TF trend) | | (size, SL/TP, DD) |
@@ -23,6 +24,7 @@ v
 | (logs, metrics|
 | and events) |
 +---------------+
+```
 
 **Modules**
 - **Signal Engine**  
@@ -73,7 +75,7 @@ You can keep configuration in `config/goldx.json`:
   }
 }
 ```
-Threading Model
+##Threading Model
 
 Signal evaluation runs on the market data loop.
 
