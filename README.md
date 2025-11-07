@@ -19,10 +19,6 @@ This repository provides:
 - Multi-timeframe trend detection (M1 → H1)  
 - Volatility-adaptive scalping logic  
 - Risk-controlled execution  
-- Auto break-even & dynamic SL/TP  
-- Session-aware logic & drawdown protection  
-- API-ready modular architecture  
-
 ---
 
 ##  Repository Structure
